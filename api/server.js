@@ -16,7 +16,7 @@ server.use('/api/users', authRouter)
 server.get('/api/users', async (req, res) => {
   res.json(await getAllUsers())
 })
-server.use('/api/potlucks',potlucksRouter)
+server.use('/api/potlucks', potlucksRouter)
 
 
 
