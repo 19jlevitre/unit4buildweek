@@ -13,8 +13,17 @@ async function insertPotluck(potluck) {
 function findAll() {
     return db('potlucks')
 }
+function update(id, changes) {
+    return db('potlucks')
+      .where('potluck_id', id)
+      .update(changes)
+      .then(rows => {
+        return rows;
+      });
+  }
 module.exports = {
     insertPotluck,
     findBy,
-    findAll
+    findAll,
+    update
 }
