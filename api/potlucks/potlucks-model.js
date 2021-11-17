@@ -6,10 +6,63 @@ async function insertPotluck(potluck) {
     const [newPotluckObject] = await db('potlucks').insert(potluck, ['potluck_id', 'name', 'host', 'location', 'time', 'date'])
     return newPotluckObject // { user_id: 7, username: 'foo', password: 'xxxxxxx' }
   }
-  function findBy(filter) {
-    return db('p')
-        .where(filter)
+  async function findById(id) {
+    const rows = await db('potlucks as p')
+    .leftJoin('users_potlucks as up', 'up.potluck_id', 'p.potluck_id')
+    .leftJoin('users as u', 'u.user_id', 'up.user_id')
+    .select(
+        'p.potluck_id',
+        'p.name',
+        'p.host',
+        'p.time',
+        'p.date',
+        'p.location',
+        'u.username'
+    )
+        .where('p.potluck_id',id)
+
+        let result = { users:[] }
+
+        for (let user of rows) {
+            if(!result.potluck_id) {
+                result.potluck_id = user.potluck_id
+                result.name = user.name
+                result.host = user.host
+                result.time = user.time
+                result.date = user.date
+                result.location = user.location
+            }
+            if(user.potluck_id) {
+                result.users.push({
+                    username: user.username
+            })
+            }
+        }
+        return result
+
 }
+async function inviteUser(potluck_id, user_id) {
+    return await db('users_potlucks').insert({
+        user_id,
+        potluck_id
+    })
+    }
+
+/*
+[
+    {
+        id
+        name
+        host
+        time
+        date
+        location
+        guests: [usernames]
+        itemsNeeded: [items]
+    }
+]
+*/
+
 function findAll() {
     return db('potlucks')
 }
@@ -23,7 +76,8 @@ function update(id, changes) {
   }
 module.exports = {
     insertPotluck,
-    findBy,
+    findById,
     findAll,
-    update
+    update,
+    inviteUser,
 }
