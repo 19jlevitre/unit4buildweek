@@ -47,6 +47,11 @@ async function inviteUser(potluck_id, user_id) {
         potluck_id
     })
     }
+async function uninviteUser(potluck_id, user) {
+    return await db('users_potlucks as up').delete()
+    .where('up.user_id', user.user_id)
+    .where("up.potluck_id", potluck_id)
+}
 
 /*
 [
@@ -80,4 +85,5 @@ module.exports = {
     findAll,
     update,
     inviteUser,
+    uninviteUser,
 }

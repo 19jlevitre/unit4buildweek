@@ -20,12 +20,21 @@ router.post('/',(req, res) => {
         console.log(err)
       })
   });
+
   router.post('/:id/users', (req,res) => {
     const user = req.body
-    const { potluck_id } = req.params
-    console.log(potluck_id)
     Potluck.inviteUser( req.params.id, user.user_id)
-return res.json({message: 'cool'})
+return res.json({message: `user: ${user.username} added`})
+  })
+
+  router.delete('/:id/users', async  (req, res)=> {
+      const user = req.body
+      Potluck.uninviteUser(req.params.id, user)
+      .then(
+      res.json({message: `user: ${user.username} removed from potluck with id:${req.params.id}`}))
+      .catch(err=> {
+          console.log(err)
+      })
   })
 
 router.put('/:id', router.put('/:id', (req, res,) => {
