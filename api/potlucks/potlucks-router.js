@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const Potluck = require('./potlucks-model');
-
+const { checkUserAtPotluck } = require('./potlucks-middlware')
+const db = require('../data/db-config')
 router.get('/', async (req,res) => {
 res.json(await Potluck.findAll())
 })
@@ -37,11 +38,27 @@ return res.json({message: `user: ${user.username} added`})
       })
   })
 
-router.put('/:id', router.put('/:id', (req, res,) => {
+router.put('/:id', (req, res,) => {
     Potluck.update(req.params.id, req.body)
     .then(updatedPotluck => {
       res.json(updatedPotluck)
     })
-  }))
+  })
+
+  router.post('/:id/items', (req, res) => {
+      Potluck.createItem(req.body)
+      .then(newItem => {
+        
+           Potluck.addItemToPotluck(req.params.id, newItem.item_id) 
+        res.json({message: 'item added'})
+    })
+          .catch(err=> 
+            console.log(err))
+  })
+  router.put('/:id/items', checkUserAtPotluck, async (req, res) => {
+      const changes = req.body
+    return await db('items_potlucks as ip').update(1, changes )
+
+  })
 
 module.exports = router

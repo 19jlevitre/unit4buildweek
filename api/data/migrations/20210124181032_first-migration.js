@@ -17,9 +17,7 @@ exports.up = async (knex) => {
     })
     .createTable('items', (items) => {
       items.increments('item_id')
-      items.string('name', 200).notNullable()
-      
-      
+      items.string('itemName', 200).notNullable()
     })
     .createTable('users_potlucks', (usersPotlucks) => {
       usersPotlucks.increments('up_id')
@@ -36,9 +34,24 @@ exports.up = async (knex) => {
       .onUpdate('RESTRICT')
       .onDelete('RESTRICT')
     })
+    .createTable('items_potlucks', (itemsPotlucks) => {
+      itemsPotlucks.increments('ip_id')
+      itemsPotlucks.integer('potluck_id')
+      .unsigned()
+      .references('potluck_id')
+      .inTable('potlucks')
+      itemsPotlucks.integer('item_id')
+      .unsigned()
+      .references('item_id')
+      itemsPotlucks.boolean('beingBrought', 100).defaultTo(false)
+      
+      
+        })
+      
 }
 
 exports.down = async (knex) => {
+  await knex.schema.dropTableIfExists('items_potlucks')
   await knex.schema.dropTableIfExists('users_potlucks')
   await knex.schema.dropTableIfExists('items')
   await knex.schema.dropTableIfExists('users')
